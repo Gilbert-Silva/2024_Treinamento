@@ -1,0 +1,349 @@
+I. Como iniciar um projeto no Django
+
+1. Instalar o Django 
+pip install django
+
+2. Iniciar um projeto
+django-admin startproject meuprojeto
+
+django-admin startproject treinamento
+
+3. No diretório do projeto, criar uma aplicação
+python manage.py startapp meuarquivo
+
+cd treinamento
+python manage.py startapp agenda
+
+
+-----
+II. Como incluir um template index em uma aplicação django
+ 
+1. Criar um diretório template dentro da aplicação
+
+agenda/templates
+
+2. Criar o arquivo index.html no diretório templates
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Página Inicial</title>
+</head>
+<body>
+    <h1>Bem-vindo à minha página inicial!</h1>
+    <p>Esta é uma página de exemplo.</p>
+</body>
+</html>
+
+3. Configurar as configurações do Django
+
+No arquivo settings.py do projeto (treinamento), incluir o caminho para o diretório templates da aplicação
+
+import os
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'meuapp/templates')], # Substitua 'meuapp' pelo nome da sua aplicação
+        'APP_DIRS': True,
+        ...
+    },
+]
+
+4. Configurar uma view
+
+Crie uma view em sua aplicação que renderize o template index.html no arquivo views.py da aplicação
+
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'index.html')
+
+5. Configurar URLs
+
+Configure as URLs da sua aplicação para apontar para a view que você acabou de criar. 
+
+Crie o arquivo urls.py dentro do diretório da sua aplicação.
+
+from django.urls import path
+from .views import index
+
+urlpatterns = [
+    path('', index, name='index'),
+]
+
+Edite o arquivo urls.py do projeto para incluir o url da aplicação.
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('agenda.urls')),
+]
+
+
+-----
+III. Como configurar a aplicação agenda no arquivo settings.py do django
+
+1. Adicione a sua aplicação "agenda" ao INSTALLED_APPS:
+
+INSTALLED_APPS = [
+    ...
+    'agenda',
+    ...
+]
+
+2. Configure o banco de dados (se ainda não estiver configurado). Por exemplo, se estiver usando o SQLite:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+
+3. Se você estiver usando URLs amigáveis, também pode querer adicionar as configurações de linguagem e fuso horário:
+
+LANGUAGE_CODE = 'pt-br'
+
+TIME_ZONE = 'America/Sao_Paulo'
+
+
+-----
+IV. Como criar uma classe no models.py do django para modelar clientes, armazenando nome, e-mail e fone
+
+1. Inserir a classe no arquivo models.py
+
+from django.db import models
+
+class Cliente(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField()
+    fone = models.CharField(max_length=15)
+
+    def __str__(self):
+        return f"{self.nome} - {self.email} - {self.fone}"
+
+2. Após criar esse modelo, você precisa executar as migrações para aplicar as alterações ao banco de dados
+
+No diretório do projeto, execute os comandos:
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+
+-----
+V. Como criar o superusuário no django
+
+1. Para criar um superusuário no Django, você pode usar o comando createsuperuser do Django
+
+python manage.py createsuperuser
+
+
+-----
+VI. Como mostrar a classe Cliente no site de administração do django
+
+
+1. Abra o arquivo admin.py no diretório do seu aplicativo Django
+
+2. Importe a classe Cliente do arquivo models.py do mesmo diretório
+
+from .models import Cliente
+
+3. Registre a classe Cliente usando admin.site.register()
+
+from django.contrib import admin
+from .models import Cliente
+
+admin.site.register(Cliente)
+
+
+VII. Como rodar um comando sql para selecionar os clientes no arquivo db.sqlite3
+
+1. Execute o comando sqlite3 db.sqlite3 para abrir o banco de dados no cliente SQLite.
+
+2. Uma vez dentro do cliente SQLite, você pode executar sua consulta SQL
+
+SELECT * FROM clientes;
+
+3. Para sair do cliente SQLite, você pode digitar .quit e pressionar Enter.
+
+
+VIII. Como incluir um template listar_clientes para listar os clientes cadastrados no banco de dados de uma aplicação django
+
+1. Crie um novo template HTML: Vamos chamar este template de listar_clientes.html.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Clientes</title>
+</head>
+<body>
+    <h1>Lista de Clientes</h1>
+    <ul>
+        {% for cliente in clientes %}
+            <li>{{ cliente.nome }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
+
+2. Crie uma view em Django para renderizar o template
+
+from django.shortcuts import render
+from agenda.models import Cliente
+
+def listar_clientes(request):
+    clientes = Cliente.objects.all()
+    return render(request, 'listar_clientes.html', {'clientes': clientes})
+
+
+3. Configure a URL para a view:
+
+from django.urls import path
+from .views import listar_clientes
+
+urlpatterns = [
+    path('clientes/', listar_clientes, name='listar_clientes'),
+    # outras URLs da sua aplicação...
+]
+
+
+IX. Como inserir um link no arquivo index.html para o template listar_clientes em uma aplicação do django
+
+1. Crie um link usando a tag <a> do HTML para apontar para o URL do template listar_clientes
+
+<a href="{% url 'listar_clientes' %}">Listar Clientes</a>
+
+Neste exemplo, {% url 'listar_clientes' %} é uma template tag do Django que gera automaticamente o URL correto para a view listar_clientes, com base no nome definido na sua configuração de URLs.
+
+
+X. Como incluir um template inserir_clientes para cadastrar clientes, com nome, e-mail e fone, informados pelo usuário, em um banco de dados de uma aplicação django
+
+1. Crie um novo template HTML: Vamos chamar este template de inserir_clientes.html.
+
+2. Defina o conteúdo do template HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserir Cliente</title>
+</head>
+<body>
+    <h1>Inserir Cliente</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="nome">Nome:</label><br>
+        <input type="text" id="nome" name="nome"><br>
+        <label for="email">E-mail:</label><br>
+        <input type="email" id="email" name="email"><br>
+        <label for="fone">Telefone:</label><br>
+        <input type="text" id="fone" name="fone"><br><br>
+        <input type="submit" value="Salvar">
+    </form>
+</body>
+</html>
+
+
+Neste exemplo, criamos um formulário HTML com campos para o nome, e-mail e telefone do cliente. O atributo method do formulário é definido como "post" para enviar os dados do formulário para o servidor. O {% csrf_token %} é uma medida de segurança contra ataques CSRF.
+
+3. Crie uma view em Django para processar o formulário
+
+from django.shortcuts import render, redirect
+from minha_app.models import Cliente
+from minha_app.forms import ClienteForm
+
+def inserir_cliente(request):
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_clientes')
+    else:
+        form = ClienteForm()
+    return render(request, 'inserir_cliente.html', {'form': form})
+
+
+Neste exemplo, presumimos que você tem um modelo chamado Cliente em sua aplicação Django. O ClienteForm é uma classe de formulário que você precisará criar (ou substituir por forms.ModelForm se estiver usando um formulário de modelo). Certifique-se de substituir minha_app pelo nome real da sua aplicação Django.
+
+4. Configure a URL para a view
+
+from django.urls import path
+from minha_app.views import inserir_cliente
+
+urlpatterns = [
+    path('clientes/inserir/', inserir_cliente, name='inserir_cliente'),
+    # outras URLs da sua aplicação...
+]
+
+XI. Como criar a classe de formulário ClienteForm em uma aplicação django baseada no template inserir_cliente
+
+1. Crie um arquivo forms.py: Este arquivo ficará dentro do diretório da sua aplicação Django e será onde você definirá suas classes de formulário.
+
+2. Defina a classe ClienteForm: Dentro do arquivo forms.py, você definirá a classe ClienteForm. Você pode usar o ModelForm do Django se o formulário estiver diretamente relacionado ao modelo Cliente. Aqui está um exemplo:
+
+from django import forms
+from .models import Cliente
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ['nome', 'email', 'fone']
+
+
+Neste exemplo, criamos uma classe ClienteForm que herda de forms.ModelForm. No atributo Meta, especificamos o modelo relacionado (Cliente) e os campos que devem aparecer no formulário (nome, email e fone). O Django irá automaticamente gerar os campos do formulário com base no modelo Cliente.
+
+XII. Como incluir um template inserir_clientes para cadastrar clientes, com nome, e-mail e fone, informados pelo usuário, em um banco de dados de uma aplicação django
+
+1. Crie a URL: Em seu arquivo urls.py, adicione uma URL para a view que será responsável pela edição do cliente.
+
+    path('clientes/editar/<int:cliente_id>/', editar_cliente, name='editar_cliente'),
+
+
+2. Crie uma view em seu arquivo views.py que receberá o pedido de edição do cliente. Dentro desta view, você precisará recuperar o cliente do banco de dados e passá-lo para o template de edição.
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Cliente
+from .forms import ClienteForm
+
+def editar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect('pagina_de_sucesso')
+    else:
+        form = ClienteForm(instance=cliente)
+    return render(request, 'editar_cliente.html', {'form': form})
+
+
+3. Criar o Template: Crie um template HTML onde você irá exibir o formulário de edição do cliente. Este formulário deve incluir campos para o nome, e-mail e telefone do cliente, pré-preenchidos com as informações existentes no banco de dados.
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Cliente</title>
+</head>
+<body>
+    <h2>Editar Cliente</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</body>
+</html>
+
+
