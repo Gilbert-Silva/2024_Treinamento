@@ -26,12 +26,19 @@ SECRET_KEY = 'django-insecure-w=esa)y%z^3t*w-oc8l8awe6v&vr(c_aa4d!_hd)ly$*vj@3&8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = ['http://localhost']
+
+# CORS_ALLOWED_ORIGINS = ['localhost']
+
+ALLOWED_HOSTS = ['localhost']
+
+# ALLOWED_HOSTS = []
 
 # Application definition
 
 INSTALLED_APPS = [
     'agenda',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,9 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
