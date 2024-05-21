@@ -1,16 +1,37 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <title>Lista de Clientes</title>
 </head>
 <body>
     <h1>Lista de Clientes</h1>
     <ul>
         {% for cliente in clientes %}
-            <li>{{ cliente.id }} - {{ cliente.nome }} - {{ cliente.fone }}</li>
+            <li>
+                {{ cliente.id }} - {{ cliente.nome }} - {{ cliente.fone }}
+
+                <!-- Link para editar o cliente -->
+                <a href="{% url 'editar_cliente' cliente.id %}">
+                    <i class="fas fa-edit"></i>
+                </a>
+
+                <!-- Formulário para remover o cliente -->
+                <form action="{% url 'excluir_cliente' cliente.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este cliente?')" class="button-delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </form>
+            </li>
         {% endfor %}
     </ul>
 </body>
 </html>
+

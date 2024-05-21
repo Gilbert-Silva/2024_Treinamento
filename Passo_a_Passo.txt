@@ -1,5 +1,5 @@
 Inputs Chatbot
-Teste action
+
 I. Como iniciar um projeto no Django
 
 1. Instalar o Django 
@@ -106,7 +106,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 3. Se você estiver usando URLs amigáveis, também pode querer adicionar as configurações de linguagem e fuso horário:
 
@@ -288,6 +287,7 @@ urlpatterns = [
     # outras URLs da sua aplicação...
 ]
 
+
 XI. Como criar a classe de formulário ClienteForm em uma aplicação django baseada no template inserir_cliente
 
 1. Crie um arquivo forms.py: Este arquivo ficará dentro do diretório da sua aplicação Django e será onde você definirá suas classes de formulário.
@@ -305,15 +305,14 @@ class ClienteForm(forms.ModelForm):
 
 Neste exemplo, criamos uma classe ClienteForm que herda de forms.ModelForm. No atributo Meta, especificamos o modelo relacionado (Cliente) e os campos que devem aparecer no formulário (nome, email e fone). O Django irá automaticamente gerar os campos do formulário com base no modelo Cliente.
 
-XII. Como incluir um template inserir_clientes para cadastrar clientes, com nome, e-mail e fone, informados pelo usuário, em um banco de dados de uma aplicação django
+
+XII. Como incluir um template editar_clientes para editar clientes, com nome, e-mail e fone, informados pelo usuário, em um banco de dados de uma aplicação django
 
 1. Crie a URL: Em seu arquivo urls.py, adicione uma URL para a view que será responsável pela edição do cliente.
 
     path('clientes/editar/<int:cliente_id>/', editar_cliente, name='editar_cliente'),
 
-
 2. Crie uma view em seu arquivo views.py que receberá o pedido de edição do cliente. Dentro desta view, você precisará recuperar o cliente do banco de dados e passá-lo para o template de edição.
-
 
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Cliente
@@ -347,5 +346,131 @@ def editar_cliente(request, cliente_id):
     </form>
 </body>
 </html>
+
+
+XIII. Como incluir um template listar_clientes para listar os clientes cadastrados no banco de dados de uma aplicação django, mostrando ao lado de cada cliente um ícone para editar seus dados e outro ícone para remover um cliente
+
+1. Para incluir ícones para editar e remover clientes ao lado de cada cliente listado em seu template
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Clientes</title>
+</head>
+<body>
+    <h1>Lista de Clientes</h1>
+    <ul>
+        {% for cliente in clientes %}
+            <li>
+                {{ cliente.nome }}
+
+                <!-- Link para editar o cliente -->
+                <a href="{% url 'editar_cliente' cliente.id %}">
+                    <img src="{% static 'caminho-para-icon-edit.png' %}" alt="Editar">
+                </a>
+
+                <!-- Formulário para remover o cliente -->
+                <form action="{% url 'remover_cliente' cliente.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('Tem certeza que deseja remover este cliente?')">
+                        <img src="{% static 'caminho-para-icon-remove.png' %}" alt="Remover">
+                    </button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
+2. URLs: Você precisa configurar URLs para editar e remover clientes.
+
+# urls.py
+
+from django.urls import path
+from .views import listar_clientes, editar_cliente, remover_cliente
+
+urlpatterns = [
+    path('clientes/', listar_clientes, name='listar_clientes'),
+    path('clientes/<int:cliente_id>/editar/', editar_cliente, name='editar_cliente'),
+    path('clientes/<int:cliente_id>/remover/', remover_cliente, name='remover_cliente'),
+    # Outras URLs da sua aplicação...
+]
+
+3. Views: Você precisa criar views correspondentes para editar e remover clientes.
+
+# views.py
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Cliente
+
+def editar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    # Lógica para editar o cliente
+    return redirect('listar_clientes')
+
+def remover_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    # Lógica para remover o cliente
+    cliente.delete()
+    return redirect('listar_clientes')
+
+
+XIV. Como criar um diretório static em uma aplicação django
+
+1. Crie o diretório static: Dentro do diretório da sua aplicação Django
+
+mkdir sua_app/static
+
+2. Organize os arquivos estáticos: Dentro do diretório static, você pode organizar seus arquivos estáticos como desejar. Por exemplo, você pode ter subdiretórios para diferentes tipos de arquivos estáticos, como css, js e images
+
+sua_app/static/images
+
+3. Configure o caminho estático: Certifique-se de que o diretório static seja reconhecido pelo Django como um diretório de arquivos estáticos. Para fazer isso, adicione 'sua_app.static' à lista STATICFILES_DIRS no arquivo de configuração settings.py da sua aplicação:
+
+# settings.py
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'sua_app/static'),
+]
+
+4. Referencie os arquivos estáticos nos templates: Agora você pode referenciar os arquivos estáticos nos seus templates HTML usando a tag {% static %} do Django
+
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+5. Insira no arquivo o código python de carregar static
+
+{% load static %}
+
+
+XV. Como inserir ícones em uma aplicação django
+
+pip install SomePackage 
+
+INSTALLED_APPS = [
+    'fontawesome-free',
+    'agenda',
+    ...
+]
+
+
+1. Instalar o Font Awesome:
+
+Adicione isso ao <head> do seu arquivo HTML base ou onde deseja usar os ícones:
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-gMp0eXHf9xFLBsIMVh8fC9mqJvg2j8U3+U1+BhR6oW+eMDvfi6kpkJTJupIUKPSnSjKr0GjqFnNsZGbD0CaUcg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+2. Usando ícones em seus templates:
+
+Depois de incluir o Font Awesome em seu projeto, você pode usar ícones em seus templates HTML. Por exemplo, para adicionar um ícone de lápis para edição, você pode fazer o seguinte:
+
+<i class="fas fa-pencil-alt"></i>
+
+<i class="fas fa-trash-alt"></i>
+
+
 
 
