@@ -18,16 +18,19 @@
                 {{ cliente.id }} - {{ cliente.nome }} - {{ cliente.fone }}
 
                 <!-- Link para editar o cliente -->
-                <a href="{% url 'editar_cliente' cliente.id %}">
+                <a href="{% url 'cliente_editar' cliente.id %}">
                     <i class="fas fa-edit"></i>
                 </a>
+                <a href="{% url 'cliente_excluir' cliente.id %}">
+                    <i class="fas fa-trash"></i>
+                </a>
 
-                <!-- Formulário para remover o cliente -->
-                <form action="{% url 'excluir_cliente' cliente.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este cliente?')" class="button-delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <!-- Formulário para remover o cliente --> 
+                <!-- <form action="{% url 'cliente_excluir' cliente.id %}" method="post" style="display: inline;"> -->
+                <!--     {% csrf_token %} -->
+                <!--     <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este cliente?')" class="button-delete"> -->
+                <!--         <i class="fas fa-trash"></i> -->
+                <!--     </button> -->
                 </form>
             </li>
         {% endfor %}

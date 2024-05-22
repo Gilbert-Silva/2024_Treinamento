@@ -1,0 +1,176 @@
+Inputs Chatgpt
+
+-----
+I. Como iniciar um projeto no Django
+
+1. Instalar o Django 
+pip install django
+
+2. Iniciar um projeto
+django-admin startproject meuprojeto
+
+django-admin startproject treinamento
+
+3. No diretório do projeto, criar uma aplicação
+python manage.py startapp meuarquivo
+
+cd treinamento
+python manage.py startapp agenda
+
+
+-----
+II. Como incluir um template index em uma aplicação django
+ 
+1. Criar um diretório template dentro da aplicação
+
+agenda/templates
+
+2. Criar o arquivo index.html no diretório templates
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Página Inicial</title>
+</head>
+<body>
+    <h1>Bem-vindo à minha página inicial!</h1>
+    <p>Esta é uma página de exemplo.</p>
+</body>
+</html>
+
+3. Configurar as configurações do Django
+
+No arquivo settings.py do projeto (treinamento), incluir o caminho para o diretório templates da aplicação
+
+import os
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'meuapp/templates')], # Substitua 'meuapp' pelo nome da sua aplicação
+        'APP_DIRS': True,
+        ...
+    },
+]
+
+4. Configurar uma view
+
+Crie uma view em sua aplicação que renderize o template index.html no arquivo views.py da aplicação
+
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'index.html')
+
+5. Configurar URLs
+
+Configure as URLs da sua aplicação para apontar para a view que você acabou de criar. 
+
+Crie o arquivo urls.py dentro do diretório da sua aplicação.
+
+from django.urls import path
+from .views import index
+
+urlpatterns = [
+    path('', index, name='index'),
+]
+
+Edite o arquivo urls.py do projeto para incluir o url da aplicação.
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('agenda.urls')),
+]
+
+
+-----
+III. Como configurar a aplicação agenda no arquivo settings.py do django
+
+1. Adicione a sua aplicação "agenda" ao INSTALLED_APPS:
+
+INSTALLED_APPS = [
+    ...
+    'agenda',
+    ...
+]
+
+2. Configure o banco de dados (se ainda não estiver configurado). Por exemplo, se estiver usando o SQLite:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+3. Se você estiver usando URLs amigáveis, também pode querer adicionar as configurações de linguagem e fuso horário:
+
+LANGUAGE_CODE = 'pt-br'
+
+TIME_ZONE = 'America/Sao_Paulo'
+
+
+-----
+IV. Como criar uma classe no models.py do django para modelar clientes, armazenando nome, e-mail e fone
+
+1. Inserir a classe no arquivo models.py
+
+from django.db import models
+
+class Cliente(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField()
+    fone = models.CharField(max_length=15)
+
+    def __str__(self):
+        return f"{self.nome} - {self.email} - {self.fone}"
+
+2. Após criar esse modelo, você precisa executar as migrações para aplicar as alterações ao banco de dados
+
+No diretório do projeto, execute os comandos:
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+
+-----
+V. Como criar o superusuário no django
+
+1. Para criar um superusuário no Django, você pode usar o comando createsuperuser do Django
+
+python manage.py createsuperuser
+
+
+-----
+VI. Como mostrar a classe Cliente no site de administração do django
+
+1. Abra o arquivo admin.py no diretório do seu aplicativo Django
+
+2. Importe a classe Cliente do arquivo models.py do mesmo diretório
+
+from .models import Cliente
+
+3. Registre a classe Cliente usando admin.site.register()
+
+from django.contrib import admin
+from .models import Cliente
+
+admin.site.register(Cliente)
+
+
+-----
+VII. Como rodar um comando sql para selecionar os clientes no arquivo db.sqlite3
+
+1. Execute o comando sqlite3 db.sqlite3 para abrir o banco de dados no cliente SQLite.
+
+2. Uma vez dentro do cliente SQLite, você pode executar sua consulta SQL
+
+SELECT * FROM clientes;
+
+3. Para sair do cliente SQLite, você pode digitar .quit e pressionar Enter.
