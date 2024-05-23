@@ -1,0 +1,18 @@
+Inputs Chatgpt - Definição do modelo de Serviço
+
+I. Como criar uma classe no models.py do django para modelar serviços, armazenando descrição, valor (float) e duração (int)
+
+from django.db import models
+
+class Servico(models.Model):
+    descricao = models.CharField(max_length=200)
+    valor = models.FloatField()
+    duracao = models.IntegerField()  # Duração em minutos, por exemplo
+
+    def __str__(self):
+        return self.descricao
+
+1. Após definir essa classe no models.py, python manage.py makemigrations e python manage.py migrate para criar as tabelas correspondentes no banco de dados.
+
+2. No arquivo admin.py, registre a classe Cliente usando admin.site.register()
+

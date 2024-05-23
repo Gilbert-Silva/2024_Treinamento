@@ -1,4 +1,4 @@
-Inputs Chatgpt
+Inputs Chatgpt - Criação e configuração de um projeto Django
 
 -----
 I. Como iniciar um projeto no Django
@@ -115,62 +115,3 @@ LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 
 
------
-IV. Como criar uma classe no models.py do django para modelar clientes, armazenando nome, e-mail e fone
-
-1. Inserir a classe no arquivo models.py
-
-from django.db import models
-
-class Cliente(models.Model):
-    nome = models.CharField(max_length=100)
-    email = models.EmailField()
-    fone = models.CharField(max_length=15)
-
-    def __str__(self):
-        return f"{self.nome} - {self.email} - {self.fone}"
-
-2. Após criar esse modelo, você precisa executar as migrações para aplicar as alterações ao banco de dados
-
-No diretório do projeto, execute os comandos:
-
-python manage.py makemigrations
-
-python manage.py migrate
-
-
------
-V. Como criar o superusuário no django
-
-1. Para criar um superusuário no Django, você pode usar o comando createsuperuser do Django
-
-python manage.py createsuperuser
-
-
------
-VI. Como mostrar a classe Cliente no site de administração do django
-
-1. Abra o arquivo admin.py no diretório do seu aplicativo Django
-
-2. Importe a classe Cliente do arquivo models.py do mesmo diretório
-
-from .models import Cliente
-
-3. Registre a classe Cliente usando admin.site.register()
-
-from django.contrib import admin
-from .models import Cliente
-
-admin.site.register(Cliente)
-
-
------
-VII. Como rodar um comando sql para selecionar os clientes no arquivo db.sqlite3
-
-1. Execute o comando sqlite3 db.sqlite3 para abrir o banco de dados no cliente SQLite.
-
-2. Uma vez dentro do cliente SQLite, você pode executar sua consulta SQL
-
-SELECT * FROM clientes;
-
-3. Para sair do cliente SQLite, você pode digitar .quit e pressionar Enter.
