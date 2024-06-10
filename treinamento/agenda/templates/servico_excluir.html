@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Serviço</title>
+</head>
+<body>
+    <h1>Excluir Serviço</h1>
+    <p>Tem certeza de que deseja excluir o serviço "{{ servico.descricao }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button-delete">Confirmar Exclusão</button>
+        <a href="{% url 'servico_listar' %}">Cancelar</a>
+    </form>
+</body>
+</html>

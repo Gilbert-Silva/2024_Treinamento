@@ -16,3 +16,105 @@ class Servico(models.Model):
 
 2. No arquivo admin.py, registre a classe Cliente usando admin.site.register()
 
+
+II. Como incluir um template servico_inserir para cadastrar serviços, com descrição, valor e duração, no banco de dados de uma aplicação django
+
+1. Criar o template HTML: Crie um arquivo HTML dentro do diretório de templates da sua aplicação Django. Por exemplo, você pode nomeá-lo como servico_inserir.html.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserir Cliente</title>
+</head>
+<body>
+    <h1>Inserir Serviço</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="descricao">Descrição:</label><br>
+        <input type="text" id="descricao" name="descricao"><br>
+        <label for="valor">Valor:</label><br>
+        <input type="text" id="valor" name="valor"><br>
+        <label for="duracao">Duração:</label><br>
+        <input type="text" id="duracao" name="duracao"><br>
+        <button type="submit">Salvar</button>
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
+</body>
+</html>
+
+2. Crie uma view em Django para processar o formulário
+
+from django.shortcuts import render, redirect
+from .models import Servico
+from .forms import ServicoForm
+
+def inserir_servico(request):
+    if request.method == "POST":
+        form = ServicoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('url_para_pagina_de_sucesso')
+    else:
+        form = ServicoForm()
+    return render(request, 'servico_incluir.html', {'form': form})
+
+3. Configure a URL para a view
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('servicos/inserir/', servico_inserir, name='servico_inserir'),
+    # outras URLs...
+]
+
+III. Como incluir um template servico_listar para listar os serviços cadastrados no banco de dados de uma aplicação django
+
+1. Criar o template HTML: Crie um arquivo HTML dentro do diretório de templates da sua aplicação Django. Por exemplo, você pode nomeá-lo como servico_listar.html
+
+<!-- servico_listar.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Serviços</title>
+</head>
+<body>
+    <h1>Lista de Serviços</h1>
+    <ul>
+        {% for servico in servicos %}
+            <li>{{ servico.descricao }} - R$ {{ servico.valor }} - Duração: {{ servico.duracao }}</li>
+        {% empty %}
+            <li>Nenhum serviço cadastrado.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
+2. Views
+
+from django.shortcuts import render
+from .models import Servico
+
+def listar_servicos(request):
+    servicos = Servico.objects.all()
+    return render(request, 'servico_listar.html', {'servicos': servicos})
+
+3. URL
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('listar_servicos/', views.listar_servicos, name='listar_servicos'),
+    # outras URLs...
+]
+
+

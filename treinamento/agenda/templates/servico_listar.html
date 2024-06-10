@@ -8,30 +8,22 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-    <title>Lista de Clientes</title>
+    <title>Lista de Serviços</title>
 </head>
 <body>
-    <h1>Lista de Clientes</h1>
+    <h1>Lista de Serviços</h1>
     <ul>
-        {% for cliente in clientes %}
+        {% for servico in servicos %}
             <li>
-                {{ cliente.id }} - {{ cliente.nome }} - {{ cliente.fone }}
+                {{ servico.id }} - {{ servico.descricao }} - R$ {{ servico.valor }}
 
                 <!-- Link para editar o cliente -->
-                <a href="{% url 'cliente_editar' cliente.id %}">
+                <a href="{% url 'servico_editar' servico.id %}">
                     <i class="fas fa-edit"></i>
                 </a>
-                <a href="{% url 'cliente_excluir' cliente.id %}">
+                <a href="{% url 'servico_excluir' servico.id %}">
                     <i class="fas fa-trash"></i>
                 </a>
-
-                <!-- Formulário para remover o cliente --> 
-                <!-- <form action="{% url 'cliente_excluir' cliente.id %}" method="post" style="display: inline;"> -->
-                <!--     {% csrf_token %} -->
-                <!--     <button type="submit" onclick="return confirm('Tem certeza que deseja excluir este cliente?')" class="button-delete"> -->
-                <!--         <i class="fas fa-trash"></i> -->
-                <!--     </button> -->
-                <!-- </form> -->
             </li>
         {% endfor %}
     </ul>

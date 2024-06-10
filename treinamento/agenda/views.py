@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from agenda.models import Cliente
-from agenda.forms import ClienteForm
+from agenda.models import Cliente, Servico
+from agenda.forms import ClienteForm, ServicoForm
 
 # Create your views here.
 
@@ -53,3 +53,41 @@ def cliente_excluir(request, cliente_id):
     # Lógica para remover o cliente
     cliente.delete()
     return redirect('cliente_listar')
+
+def servico_listar(request):
+    servicos = Servico.objects.all()
+    return render(request, 'servico_listar.html', {'servicos': servicos})
+
+def servico_inserir(request):
+    if request.method == 'POST':
+        form = ServicoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('servico_listar')
+        else:
+            messages.error(request, "Informe os dados corretamente!")
+            return redirect('servico_inserir')
+    else:
+        form = ServicoForm()
+    return render(request, 'servico_inserir.html', {'form': form })
+
+def servico_editar(request, servico_id):
+    servico = get_object_or_404(Servico, pk=servico_id)
+    if request.method == 'POST':
+        form = ServicoForm(request.POST, instance=servico)
+        if form.is_valid():
+            form.save()
+            return redirect('servico_listar')
+        else:
+            messages.error(request, "Informe os dados corretamente!")
+            return redirect('servico_editar')
+    else:
+        form = ServicoForm(instance=servico)
+    return render(request, 'servico_editar.html', {'form': form})
+
+def servico_excluir(request, servico_id):
+    servico = get_object_or_404(Servico, pk=servico_id)
+    if request.method == 'POST':
+        servico.delete()
+        return redirect('servico_listar')
+    return render(request, 'servico_excluir.html', {'servico': servico})
