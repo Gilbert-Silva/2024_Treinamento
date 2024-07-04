@@ -32,7 +32,8 @@ CSRF_TRUSTED_ORIGINS = ['https://localhost:8000']
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# ALLOWED_HOSTS = []
+# Redirect to home URL after login (Default redirects to /accounts/profile/)
+LOGIN_REDIRECT_URL = '/'
 
 # Application definition
 
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'treinamento.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'agenda/templates')],        
+        'DIRS': [os.path.join(BASE_DIR, 'agenda/templates'), os.path.join(BASE_DIR, 'templates')],      
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,3 +142,6 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
     messages.SUCCESS: 'success',
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+

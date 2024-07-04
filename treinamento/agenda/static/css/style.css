@@ -1,9 +1,0 @@
-.button-delete{
-    outline: none;
-    border: none;
-    background-color: #fff;
-}
-
-.button-delete:hover{
-    cursor: pointer;
-}

@@ -1,14 +1,21 @@
-{% extends "base_generic.html" %}
-
-{% block content %}
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IF - Lavajato</title>
+</head>
+<body>
     <h1>Bem-vindo ao IF - Lavajato</h1>
-
+    <p>Selecione a operação desejada:</p>
     <!-- <p><a href="{% url 'cliente_listar' %}">Lista de Clientes</a></p> -->
     <p><a href="{% url 'cliente_inserir' %}">Inserir Clientes</a></p>
     <!-- <p><a href="{% url 'servico_listar' %}">Lista de Serviços</a></p> -->
     <p><a href="{% url 'servico_inserir' %}">Inserir Serviços</a></p>
 
-    <p>Essa página foi visualizada {{ visits }} vez(es).</p>
+    <p>
+        Essa página foi visualizada {{ visits }} vez(es).
+    </p>
 
-{% endblock %}
+</body>
+</html>

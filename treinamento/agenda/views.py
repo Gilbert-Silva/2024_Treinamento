@@ -2,12 +2,23 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from agenda.models import Cliente, Servico
 from agenda.forms import ClienteForm, ServicoForm
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html')
+    # Number of visits to this view, as counted in the session variable.
+    visits = request.session.get('visits', 0)
+    request.session['visits'] = visits + 1
 
+    contexto = {
+        'visits': visits,
+    }    
+
+    #return render(request, 'index.html')
+    return render(request, 'index.html', context = contexto)
+
+@login_required
 def cliente_listar(request):
     clientes = Cliente.objects.all()
     return render(request, 'cliente_listar.html', {'clientes': clientes})
@@ -54,6 +65,7 @@ def cliente_excluir(request, cliente_id):
     cliente.delete()
     return redirect('cliente_listar')
 
+@login_required
 def servico_listar(request):
     servicos = Servico.objects.all()
     return render(request, 'servico_listar.html', {'servicos': servicos})
